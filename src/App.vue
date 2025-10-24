@@ -234,7 +234,7 @@ export default {
   gap: 1px;
   background: #ddd;
   flex-shrink: 0;
-  height: 280px;
+  height: 200px; /* 减少高度从280px到200px */
 }
 
 .input-column {

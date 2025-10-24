@@ -1,6 +1,65 @@
 <template>
   <div class="diff-viewer">
-    <div class="diff-container">
+    <div class="diff-controls">
+      <div class="control-group">
+        <label>
+          <input type="radio" v-model="diffMode" value="v-code-diff" />
+          使用 v-code-diff 组件
+        </label>
+        <label>
+          <input type="radio" v-model="diffMode" value="custom" />
+          使用自定义算法
+        </label>
+      </div>
+      <div class="control-group" v-if="diffMode === 'v-code-diff'">
+        <label>
+          <select v-model="options.language">
+            <option value="plaintext">纯文本</option>
+            <option value="javascript">JavaScript</option>
+            <option value="html">HTML</option>
+            <option value="css">CSS</option>
+            <option value="json">JSON</option>
+            <option value="xml">XML</option>
+          </select>
+          语言类型
+        </label>
+        <label>
+          <select v-model="options.diffStyle">
+            <option value="word">按词对比</option>
+            <option value="char">按字符对比</option>
+          </select>
+          对比方式
+        </label>
+        <label>
+          <input
+            type="number"
+            v-model.number="options.context"
+            min="1"
+            max="50"
+          />
+          上下文行数
+        </label>
+      </div>
+    </div>
+
+    <!-- v-code-diff 组件 -->
+    <div v-if="diffMode === 'v-code-diff'" class="v-code-diff-container">
+      <v-code-diff
+        :old-string="oldText"
+        :new-string="newText"
+        :language="options.language"
+        :output-format="'side-by-side'"
+        :context="options.context"
+        :diff-style="options.diffStyle"
+        :max-height="'100%'"
+        :theme="'light'"
+        :hide-header="false"
+        :hide-stat="false"
+      />
+    </div>
+
+    <!-- 自定义对比组件 -->
+    <div v-else class="diff-container">
       <div class="diff-column left-column">
         <div class="column-header">
           <span class="column-title">原始文本</span>
@@ -42,9 +101,13 @@
 
 <script>
 import DiffMatchPatch from "diff-match-patch";
+import { CodeDiff } from "v-code-diff";
 
 export default {
   name: "DiffViewer",
+  components: {
+    "v-code-diff": CodeDiff,
+  },
   props: {
     oldText: {
       type: String,
@@ -57,16 +120,31 @@ export default {
   },
   data() {
     return {
+      diffMode: "v-code-diff", // 默认使用 v-code-diff
+      options: {
+        language: "plaintext",
+        diffStyle: "word",
+        context: 10,
+      },
       leftLines: [],
       rightLines: [],
     };
   },
   watch: {
     oldText() {
-      this.computeDiff();
+      if (this.diffMode === "custom") {
+        this.computeDiff();
+      }
     },
     newText() {
-      this.computeDiff();
+      if (this.diffMode === "custom") {
+        this.computeDiff();
+      }
+    },
+    diffMode() {
+      if (this.diffMode === "custom") {
+        this.computeDiff();
+      }
     },
   },
   methods: {
@@ -175,7 +253,9 @@ export default {
     },
   },
   mounted() {
-    this.computeDiff();
+    if (this.diffMode === "custom") {
+      this.computeDiff();
+    }
   },
 };
 </script>
@@ -185,13 +265,110 @@ export default {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.diff-controls {
+  background: #f8f9fa;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e9ecef;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.control-group {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.control-group label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #495057;
+  cursor: pointer;
+  user-select: none;
+}
+
+.control-group input[type="radio"],
+.control-group input[type="checkbox"] {
+  margin: 0;
+  cursor: pointer;
+}
+
+.control-group select,
+.control-group input[type="number"] {
+  padding: 4px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-left: 6px;
+  background: white;
+}
+
+.control-group select:focus,
+.control-group input[type="number"]:focus {
+  outline: none;
+  border-color: #667eea;
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+.v-code-diff-container {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* v-code-diff 组件样式覆盖 */
+.v-code-diff-container >>> .d2h-wrapper {
+  height: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.v-code-diff-container >>> .d2h-file-wrapper {
+  height: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.v-code-diff-container >>> .d2h-file-diff {
+  height: 100% !important;
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.v-code-diff-container >>> .d2h-code-wrapper {
+  height: 100% !important;
+  flex: 1 !important;
+  overflow-y: auto !important;
+}
+
+.v-code-diff-container >>> .d2h-code-wrapper .d2h-code-line {
+  font-family: "Consolas", "Monaco", "Courier New", monospace !important;
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+/* 确保对比区域有足够的高度 */
+.v-code-diff-container >>> .d2h-code-wrapper .d2h-code-line-ctn {
+  min-height: 20px !important;
 }
 
 .diff-container {
   display: flex;
-  height: 100%;
+  flex: 1;
   gap: 1px;
   background: #ddd;
+  overflow: hidden;
 }
 
 .diff-column {

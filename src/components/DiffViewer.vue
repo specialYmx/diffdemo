@@ -271,7 +271,7 @@ export default {
 
 .diff-controls {
   background: #f8f9fa;
-  padding: 12px 16px;
+  padding: 8px 16px; /* 减少padding从12px到8px */
   border-bottom: 1px solid #e9ecef;
   display: flex;
   gap: 20px;
@@ -330,6 +330,7 @@ export default {
   height: 100% !important;
   display: flex !important;
   flex-direction: column !important;
+  min-height: 0 !important;
 }
 
 .v-code-diff-container >>> .d2h-file-wrapper {
@@ -337,6 +338,7 @@ export default {
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
+  min-height: 0 !important;
 }
 
 .v-code-diff-container >>> .d2h-file-diff {
@@ -344,23 +346,36 @@ export default {
   flex: 1 !important;
   display: flex !important;
   flex-direction: column !important;
+  min-height: 0 !important;
 }
 
 .v-code-diff-container >>> .d2h-code-wrapper {
   height: 100% !important;
   flex: 1 !important;
   overflow-y: auto !important;
+  min-height: 0 !important;
 }
 
 .v-code-diff-container >>> .d2h-code-wrapper .d2h-code-line {
   font-family: "Consolas", "Monaco", "Courier New", monospace !important;
-  font-size: 13px !important;
-  line-height: 1.5 !important;
+  font-size: 12px !important; /* 稍微减小字体 */
+  line-height: 1.4 !important; /* 稍微减小行高 */
 }
 
 /* 确保对比区域有足够的高度 */
 .v-code-diff-container >>> .d2h-code-wrapper .d2h-code-line-ctn {
-  min-height: 20px !important;
+  min-height: 18px !important; /* 稍微减小最小高度 */
+}
+
+/* 优化表格布局 */
+.v-code-diff-container >>> .d2h-code-wrapper table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+
+.v-code-diff-container >>> .d2h-code-wrapper .d2h-code-line {
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
 }
 
 .diff-container {
@@ -406,13 +421,13 @@ export default {
   overflow-y: auto;
   overflow-x: hidden;
   font-family: "Consolas", "Monaco", "Courier New", monospace;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 12px; /* 减小字体从13px到12px */
+  line-height: 1.4; /* 减小行高从1.5到1.4 */
 }
 
 .diff-line {
   display: flex;
-  min-height: 24px;
+  min-height: 20px; /* 减小最小高度从24px到20px */
   white-space: pre-wrap;
   word-break: break-all;
   border-bottom: 1px solid #f0f0f0;

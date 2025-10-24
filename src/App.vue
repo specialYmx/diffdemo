@@ -234,7 +234,7 @@ export default {
   gap: 1px;
   background: #ddd;
   flex-shrink: 0;
-  height: 200px; /* 减少高度从280px到200px */
+  height: 150px; /* 进一步减少高度到150px */
 }
 
 .input-column {
@@ -295,7 +295,7 @@ export default {
 /* 控制栏 */
 .control-bar {
   background: white;
-  padding: 15px 20px;
+  padding: 10px 20px; /* 减少padding从15px到10px */
   border-top: 1px solid #e0e0e0;
   border-bottom: 2px solid #667eea;
   display: flex;

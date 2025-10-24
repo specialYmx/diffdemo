@@ -11,7 +11,7 @@ module.exports = (env, argv) => {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: "bundle.js",
-      publicPath: "/",
+      publicPath: "./",
       clean: true, // 清理输出目录
     },
     devServer: {
@@ -57,6 +57,19 @@ module.exports = (env, argv) => {
           minifyURLs: true,
         } : false,
       }),
+      // 复制 _redirects 文件到输出目录
+      {
+        apply: (compiler) => {
+          compiler.hooks.emit.tapAsync('CopyRedirectsPlugin', (compilation, callback) => {
+            const source = '/*    /index.html   200';
+            compilation.assets['_redirects'] = {
+              source: () => source,
+              size: () => source.length
+            };
+            callback();
+          });
+        }
+      }
     ],
     resolve: {
       extensions: [".js", ".vue", ".json"],

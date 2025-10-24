@@ -39,6 +39,10 @@
           />
           上下文行数
         </label>
+        <label>
+          <input type="checkbox" v-model="options.collapse" />
+          折叠相同内容
+        </label>
       </div>
     </div>
 
@@ -49,7 +53,7 @@
         :new-string="newText"
         :language="options.language"
         :output-format="'side-by-side'"
-        :context="options.context"
+        :context="options.collapse ? options.context : 9999"
         :diff-style="options.diffStyle"
         :max-height="'100%'"
         :theme="'light'"
@@ -125,6 +129,7 @@ export default {
         language: "plaintext",
         diffStyle: "word",
         context: 10,
+        collapse: false, // 默认不折叠相同内容
       },
       leftLines: [],
       rightLines: [],
@@ -299,6 +304,7 @@ export default {
 .control-group input[type="checkbox"] {
   margin: 0;
   cursor: pointer;
+  margin-right: 6px;
 }
 
 .control-group select,

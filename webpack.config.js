@@ -19,6 +19,8 @@ module.exports = (env, argv) => {
       hot: true,
       compress: true,
       historyApiFallback: true,
+      // --- 新增下面这一行 ---
+      allowedHosts: 'all',
       static: {
         directory: path.join(__dirname, 'dist'),
       },
